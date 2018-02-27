@@ -5,11 +5,10 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:////tmp/flask_app.db')
+DATABASE_URL = url = 'postgresql://eatfitadmin@eatfit-db:Lerpekadut_82@eatfit-db.postgres.database.azure.com/eatfit'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 db = SQLAlchemy(app)
-
 
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
