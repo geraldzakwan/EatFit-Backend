@@ -26,3 +26,5 @@ def del_abang_id(user_id):
 
 def del_hr_id(user_id):
     user_ids["hr"].remove(user_id)
+
+#Dummy commit
