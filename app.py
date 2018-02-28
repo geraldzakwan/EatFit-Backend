@@ -14,9 +14,29 @@ load_dotenv(find_dotenv(), override=True)
 app = Flask(__name__)
 db = PostgreSQL()
 
-@app.route("/index", methods=['GET', 'POST'])
-def callback():
-    return 'App running well'
+@app.route('/')
+
+@app.route('/index', methods = ['GET'])
+def index():
+    return 'Chill~~~, jemput aku di kos dong'
+
+@app.route('/login', methods = ['POST'])
+def login():
+    login_dictionary = {}
+
+    if('password' in request.form):
+        login_dictionary['password'] = request.form['password']
+    else:
+        return 'Missing parameter - password'
+
+    if('username' in request.form):
+        login_dictionary['username'] = request.form['username']
+    elif('email' in request.form):
+        login_dictionary['email'] = request.form['email']
+    else:
+        return 'Missing parameter - email/username'
+
+    return db.authenticate(login_dictionary)
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
