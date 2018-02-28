@@ -9,6 +9,9 @@ from sqlalchemy import or_, func
 load_dotenv(find_dotenv(), override=True)
 
 class PostgreSQL:
+    # Sample use
+    # from postgresql import PostgreSQL
+    # db = PostgreSQL()
     def __init__(self):
         self.con, self.meta = self._connect()
         self.food_calories_table = self.meta.tables['food_calories']
@@ -23,8 +26,47 @@ class PostgreSQL:
 
         return con, meta
 
+    # Insert
+
+    # Sample use
+    # db.insert_food_calory({
+    #     'food_name' : 'Nasi Goreng',
+    #     'calory_amount' : 250
+    # })
+    def insert_user(self, user_dictionary):
+        clause = self.users_table.insert().values(user_dictionary)
+        self.con.execute(clause)
+        user_json = json.dumps(user_dictionary)
+        return jsonify (
+            msg='Signup succesful',
+            user=user_json
+        )
+
+    # Sample use
+    # db.insert_food_calory({
+    #     'username' : 'geraldzakwan',
+    #     'email' : 'geraldi.dzakwan@gmail.com',
+    #     'password' : 'lerpekadutanjing',
+    # })
+    def insert_food_calory(self, food_calory_dictionary):
+        clause = self.food_calories_table.insert().values(food_calory_dictionary)
+        self.con.execute(clause)
+
+    # Sample use
+    # db.batch_insert_food_calories('List Makanan.csv')
+    # Csv header : no, food_meal, calory_amount
+    def batch_insert_food_calories(self, csv_path):
+        csv_dataframe = pd.read_csv(csv_path)
+
+        for index, series in csv_dataframe.iterrows():
+            food_calory_dict = {}
+            for elem in series.iteritems():
+                if(elem[0] != 'no'):
+                    food_calory_dict[elem[0]] = elem[1]
+            self.insert_food_calory(food_calory_dict)
+
     # Login sample use
-    # postgres_obj.authenticate {
+    # db.authenticate {
     #   'username' : 'geraldzakwan'
     #   'password' : 'lerpekadutanjing'
     # }

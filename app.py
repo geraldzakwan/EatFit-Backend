@@ -38,6 +38,27 @@ def login():
 
     return db.authenticate(login_dictionary)
 
+@app.route('/signup', methods = ['POST'])
+def signup():
+    signup_dictionary = {}
+
+    if('username' in request.form):
+        signup_dictionary['username'] = request.form['username']
+    else:
+        return 'Missing parameter - username'
+
+    if('email' in request.form):
+        signup_dictionary['email'] = request.form['email']
+    else:
+        return 'Missing parameter - email'
+
+    if('password' in request.form):
+        signup_dictionary['password'] = request.form['password']
+    else:
+        return 'Missing parameter - password'
+
+    return db.insert_user(signup_dictionary)
+
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
     try:
