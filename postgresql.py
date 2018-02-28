@@ -17,7 +17,7 @@ class PostgreSQL:
 
     @staticmethod
     def _connect():
-        url = os.environ['DATABASE_URL']
+        url = os.environ['AZURE_DATABASE_URL']
         con = sqlalchemy.create_engine(url, client_encoding='utf8')
         meta = sqlalchemy.MetaData(bind=con, reflect=True)
 
