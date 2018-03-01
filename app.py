@@ -22,7 +22,7 @@ def index():
 
 @app.route('/login', methods = ['POST'])
 def login():
-    try:
+    # try:
         login_dictionary = {}
 
         if('password' in request.form):
@@ -38,10 +38,10 @@ def login():
             return 'Missing parameter - email/username'
 
         return db.authenticate(login_dictionary)
-    except:
-        return jsonify(
-            result='false'
-        )
+    # except:
+    #     return jsonify(
+    #         result='false'
+    #     )
 
 @app.route('/signup', methods = ['POST'])
 def signup():

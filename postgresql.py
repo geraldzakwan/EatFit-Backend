@@ -94,7 +94,7 @@ class PostgreSQL:
                 msg='Authentication error - username/email not found'
             )
 
-        user_json = json.dumps(user.items())
+        user_json = json.dumps(dict(user.items()))
         if(user['password'] == login_dictionary['password']):
             return jsonify(
                 result='true',
@@ -114,7 +114,7 @@ class PostgreSQL:
         )
         user = self.con.execute(clause).fetchone()
 
-        user_json = json.dumps(user.items())
+        user_json = json.dumps(dict(user.items()))
         return jsonify(
             result='true',
             user=user_json
@@ -175,7 +175,7 @@ class PostgreSQL:
         activity_calories = self.con.execute(clause).fetchall()
         activity_array = []
         for activity in activity_calories:
-            activity_array.append(activity.items())
+            activity_array.append(dict(activity.items()))
 
         activity_calory_json = json.dumps(activity_array)
 
@@ -201,7 +201,6 @@ class PostgreSQL:
         total_calories = 0
 
         for activity in activity_calories:
-            # print(activity.items())
             if(activity['calory_type'] == '+'):
                 total_calories = total_calories + activity['calory_amount']
             elif(activity['calory_type'] == '-'):
