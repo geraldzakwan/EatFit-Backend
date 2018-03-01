@@ -226,3 +226,15 @@ class PostgreSQL:
             total_calory_in=total_calory_in,
             total_calory_out=total_calory_out
         )
+
+    def get_calory_from_food_name(self, food_name):
+        clause = self.food_calories_table.select().where(
+            self.food_calories_table.c.food_name.contains(food_name)
+        )
+
+        food_calory = self.con.execute(clause).fetchone()
+
+        if(food_calory == None):
+            return 0
+        else:
+            return food_calory['calory_amount']

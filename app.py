@@ -139,12 +139,21 @@ def tag():
                     max_probability = prediction.probability
                     max_tag = prediction.tag
 
-            # Return only one tag
-            return jsonify(
-                result='true',
-                prediction_tag=max_tag,
-                prediction_probability=round(max_probability * 100, 2)
-            )
+            calory_amount = db.get_calory_from_food_name(max_tag)
+            if(calory_amount == 0):
+                # Return only one tag
+                return jsonify(
+                    result='false',
+                    msg='food name not found in db'
+                )
+            else:
+                # Return only one tag
+                return jsonify(
+                    result='true',
+                    prediction_tag=max_tag,
+                    prediction_probability=round(max_probability * 100, 2),
+                    calories=calory_amount
+                )
 
             # Return all tag with each possibility value
             # return jsonify(
