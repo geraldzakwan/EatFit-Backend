@@ -4,6 +4,8 @@ import sys
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask, request, abort, session, redirect, render_template, jsonify
+# from flask_wtf import csrf
+from flask_wtf.csrf import CSRFProtect
 
 from urllib import parse, request as req
 from postgresql import PostgreSQL
@@ -11,7 +13,12 @@ import jwt, json
 
 load_dotenv(find_dotenv(), override=True)
 
+UPLOAD_FOLDER = 'image'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 db = PostgreSQL()
 
 @app.route('/')
@@ -80,6 +87,7 @@ def signup():
 
 # TODO : replace hardcoded path with binary image file from POST form
 @app.route('/tag', methods = ['POST'])
+# @csrf.exempt
 def tag():
     # try:
         from azure.cognitiveservices.vision.customvision.prediction import prediction_endpoint
@@ -98,8 +106,13 @@ def tag():
         # they could be added by the following.
         #
         # Open the sample image and get back the prediction results.
-        with open("image/nasi_goreng.jpg", mode="rb") as test_data:
-            results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
+        # test_data = request.form['image']
+        # print('sampe')
+        test_data = request.files['image']
+        # print('sampe 2')
+        results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
+        # with open("image/nasi_goreng.jpg", mode="rb") as test_data:
+            # results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
 
         prediction_array = []
         prediction_json = {}
@@ -180,6 +193,7 @@ def activity():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
+    # print('SK : ' + str(app.secret_key))
     try:
         port = int(os.environ['PORT'])
     except KeyError:
