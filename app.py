@@ -40,7 +40,7 @@ def login():
         return db.authenticate(login_dictionary)
     except:
         return jsonify(
-            return='false'
+            result='false'
         )
 
 @app.route('/signup', methods = ['POST'])
@@ -66,7 +66,7 @@ def signup():
         return db.insert_user(signup_dictionary)
     except:
         return jsonify(
-            return='false'
+            result='false'
         )
 
 # TODO : replace hardcoded path with binary image file from POST form
@@ -110,19 +110,19 @@ def tag():
 
         # Return only one tag
         return jsonify(
-            return='true',
+            result='true',
             prediction_tag=max_tag,
             prediction_probability=round(max_probability * 100, 2)
         )
 
         # Return all tag with each possibility value
         # return jsonify(
-        #     return='true',
+        #     result='true',
         #     prediction_array=json.dumps(prediction_array)
         # )
     except:
         return jsonify(
-            return='false'
+            result='false'
         )
 
 @app.route('/profile', methods = ['GET','POST'])
@@ -141,18 +141,18 @@ def profile():
             return db.update_user_profile(profile_dictionary)
     except:
         return jsonify(
-            return='false'
+            result='false'
         )
 
-@app.route('/activity', methods = ['GET', 'POST']):
+@app.route('/activity', methods = ['GET', 'POST'])
 def activity():
     try:
         return jsonify(
-            return='true'
+            result='true'
         )
     except:
         return jsonify(
-            return='false'
+            result='false'
         )
 
 if __name__ == "__main__":

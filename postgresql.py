@@ -39,7 +39,7 @@ class PostgreSQL:
         self.con.execute(clause)
         user_json = json.dumps(user_dictionary)
         return jsonify (
-            return='true',
+            result='true',
             user=user_json
         )
 
@@ -88,13 +88,13 @@ class PostgreSQL:
         user_json = json.dumps(user.items())
         if(user['password'] == login_dictionary['password']):
             return jsonify(
-                return='true',
+                result='true',
                 status='true',
                 user=user_json
             )
         else:
             return jsonify(
-                return='true',
+                result='true',
                 status='false'
             )
 
@@ -107,13 +107,13 @@ class PostgreSQL:
 
         user_json = json.dumps(user.items())
         return jsonify(
-            'return':'true',
+            result='true',
             user=user_json
         )
 
     # Update user info
     def update_user_profile(self, username, profile_dictionary):
-         clause = self.users_table.update().where(
+        clause = self.users_table.update().where(
                     self.users_table.c.username==username
                   ).values(
                     username=profile_dictionary['username'],
@@ -123,7 +123,8 @@ class PostgreSQL:
                     weight=profile_dictionary['weight'],
                     birth_date=profile_dictionary['birth_date']
                   )
+                  
         return jsonify(
-            'return':'true',
+            result='true',
             user=json.dumps(profile_dictionary)
         )
