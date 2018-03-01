@@ -183,9 +183,12 @@ def activity():
             activity_dictionary['activity_date'] = request.form['activity_date']
             return db.insert_activity(activity_dictionary)
         elif(request.method == 'GET'):
-            if(request.args.get('type') == 'detail'):
-                return db.get_activities_by_date(request.args.get('username'), request.args.get('date'))
-            elif(request.args.get('type') == 'summary'):
+            if(request.args.get('level') == 'detail'):
+                if(request.args.get('type') == 'tambah'):
+                    return db.get_activities_by_date(request.args.get('username'), request.args.get('date'), '+')
+                elif(request.args.get('type') == 'kurang'):
+                    return db.get_activities_by_date(request.args.get('username'), request.args.get('date'), '-')
+            elif(request.args.get('level') == 'summary'):
                 return db.get_summary_by_date(request.args.get('username'), request.args.get('date'))
     except:
         return jsonify(

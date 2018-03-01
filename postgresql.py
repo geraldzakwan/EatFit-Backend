@@ -177,11 +177,13 @@ class PostgreSQL:
     #     'calory_amount' : 250
     # })
     # TODO : check if username already exists
-    def get_activities_by_date(self, username, date):
+    def get_activities_by_date(self, username, date, calory_type):
         clause = self.activity_calories_table.select().where(
             self.activity_calories_table.c.username == username
         ).where(
             self.activity_calories_table.c.activity_date == date
+        ).where(
+            self.activity_calories_table.c.calory_type == calory_type
         )
 
         activity_calories = self.con.execute(clause).fetchall()
