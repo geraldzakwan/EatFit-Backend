@@ -87,7 +87,7 @@ def tag():
 
         # Now there is a trained endpoint, it can be used to make a prediction
 
-        prediction_key = os.environ['NEW_CUSTOM_VISION_PREDICTION_KEY']
+        prediction_key = os.environ['OLD_CUSTOM_VISION_PREDICTION_KEY']
 
         predictor = prediction_endpoint.PredictionEndpoint(prediction_key)
 
@@ -98,8 +98,8 @@ def tag():
         # they could be added by the following.
         #
         # Open the sample image and get back the prediction results.
-        with open("/Users/line/Downloads/nasi_goreng.jpg", mode="rb") as test_data:
-            results = predictor.predict_image(os.environ['NEW_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['NEW_CUSTOM_VISION_ITERATION_ID'])
+        with open("image/nasi_goreng.jpg", mode="rb") as test_data:
+            results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
 
         prediction_array = []
         prediction_json = {}
