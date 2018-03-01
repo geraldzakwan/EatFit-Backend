@@ -156,21 +156,49 @@ class PostgreSQL:
     #     'calory_amount' : 250
     # })
     # TODO : check if username already exists
-    def get_activity_by_date(self, username, date):
+    def get_activities_by_date(self, username, date):
         clause = self.activity_calories_table.select().where(
             self.activity_calories_table.c.username == username
         ).where(
-            self.activity_calories_table.c.date == date
+            self.activity_calories_table.c.activity_date == date
         )
 
-        activity_calories = self.con.execute(clause).fetch()
+        activity_calories = self.con.execute(clause).fetchall()
         activity_array = []
         for activity in activity_calories:
-            activity_array.append(activity)
+            activity_array.append(activity.items())
 
         activity_calory_json = json.dumps(activity_array)
 
         return jsonify (
             result='true',
             activity_calory=activity_calory_json
+        )
+
+    # Sample use
+    # db.insert_food_calory({
+    #     'food_name' : 'Nasi Goreng',
+    #     'calory_amount' : 250
+    # })
+    # TODO : check if username already exists
+    def get_summary_by_date(self, username, date):
+        clause = self.activity_calories_table.select().where(
+            self.activity_calories_table.c.username == username
+        ).where(
+            self.activity_calories_table.c.activity_date == date
+        )
+
+        activity_calories = self.con.execute(clause).fetchall()
+        total_calories = 0
+
+        for activity in activity_calories:
+            # print(activity.items())
+            if(activity['calory_type'] == '+'):
+                total_calories = total_calories + activity['calory_amount']
+            elif(activity['calory_type'] == '-'):
+                total_calories = total_calories - activity['calory_amount']
+
+        return jsonify (
+            result='true',
+            total_calories=total_calories
         )
