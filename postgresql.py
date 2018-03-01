@@ -212,15 +212,17 @@ class PostgreSQL:
         )
 
         activity_calories = self.con.execute(clause).fetchall()
-        total_calories = 0
+        total_calory_in = 0
+        total_calory_out = 0
 
         for activity in activity_calories:
             if(activity['calory_type'] == '+'):
-                total_calories = total_calories + activity['calory_amount']
+                total_calory_in = total_calory_in + activity['calory_amount']
             elif(activity['calory_type'] == '-'):
-                total_calories = total_calories - activity['calory_amount']
+                total_calory_out = total_calory_out + activity['calory_amount']
 
         return jsonify (
             result='true',
-            total_calories=total_calories
+            total_calory_in=total_calory_in,
+            total_calory_out=total_calory_out
         )
