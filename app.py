@@ -29,7 +29,7 @@ def index():
 
 @app.route('/login', methods = ['POST'])
 def login():
-    # try:
+    try:
         login_dictionary = {}
 
         if('password' in request.form):
@@ -45,10 +45,10 @@ def login():
             return 'Missing parameter - email/username'
 
         return db.authenticate(login_dictionary)
-    # except:
-    #     return jsonify(
-    #         result='false'
-    #     )
+    except:
+        return jsonify(
+            result='false'
+        )
 
 @app.route('/signup', methods = ['POST'])
 def signup():
@@ -90,7 +90,7 @@ def signup():
 @app.route('/tag', methods = ['POST'])
 # @csrf.exempt
 def tag():
-    try:
+    # try:
         if(request.method == 'POST'):
             from azure.cognitiveservices.vision.customvision.prediction import prediction_endpoint
             from azure.cognitiveservices.vision.customvision.prediction.prediction_endpoint import models
@@ -110,8 +110,15 @@ def tag():
             # Open the sample image and get back the prediction results.
             # test_data = request.form['image']
             # print('sampe')
-            test_data = request.files['image']
-            # print('sampe 2')
+            try:
+                test_data = request.files['image']
+            except:
+                return jsonify(
+                    result='false',
+                    msg='test_data is None'
+                )
+            print('sampe 2')
+            print(test_data)
             results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
             # with open("image/nasi_goreng.jpg", mode="rb") as test_data:
                 # results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
@@ -144,10 +151,10 @@ def tag():
             #     result='true',
             #     prediction_array=json.dumps(prediction_array)
             # )
-    except:
-        return jsonify(
-            result='false'
-        )
+    # except:
+    #     return jsonify(
+    #         result='false'
+    #     )
 
 @app.route('/profile', methods = ['GET','POST'])
 def profile():
