@@ -90,63 +90,64 @@ def signup():
 @app.route('/tag', methods = ['POST'])
 # @csrf.exempt
 def tag():
-    # try:
-        from azure.cognitiveservices.vision.customvision.prediction import prediction_endpoint
-        from azure.cognitiveservices.vision.customvision.prediction.prediction_endpoint import models
+    try:
+        if(request.method == 'POST'):
+            from azure.cognitiveservices.vision.customvision.prediction import prediction_endpoint
+            from azure.cognitiveservices.vision.customvision.prediction.prediction_endpoint import models
 
-        # Now there is a trained endpoint, it can be used to make a prediction
+            # Now there is a trained endpoint, it can be used to make a prediction
 
-        prediction_key = os.environ['OLD_CUSTOM_VISION_PREDICTION_KEY']
+            prediction_key = os.environ['OLD_CUSTOM_VISION_PREDICTION_KEY']
 
-        predictor = prediction_endpoint.PredictionEndpoint(prediction_key)
+            predictor = prediction_endpoint.PredictionEndpoint(prediction_key)
 
-        # test_img_url = "http://efoodrecipe.com/wp-content/uploads/2017/01/pempek-recipes.jpg"
-        # results = predictor.predict_image_url("713bf156-aae0-4994-91aa-cc565185421d", "ae152805-1e2c-46fe-a6db-a57a032d2177", url=test_img_url)
+            # test_img_url = "http://efoodrecipe.com/wp-content/uploads/2017/01/pempek-recipes.jpg"
+            # results = predictor.predict_image_url("713bf156-aae0-4994-91aa-cc565185421d", "ae152805-1e2c-46fe-a6db-a57a032d2177", url=test_img_url)
 
-        # Alternatively, if the images were on disk in a folder called Images along side the sample.py then
-        # they could be added by the following.
-        #
-        # Open the sample image and get back the prediction results.
-        # test_data = request.form['image']
-        # print('sampe')
-        test_data = request.files['image']
-        # print('sampe 2')
-        results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
-        # with open("image/nasi_goreng.jpg", mode="rb") as test_data:
-            # results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
+            # Alternatively, if the images were on disk in a folder called Images along side the sample.py then
+            # they could be added by the following.
+            #
+            # Open the sample image and get back the prediction results.
+            # test_data = request.form['image']
+            # print('sampe')
+            test_data = request.files['image']
+            # print('sampe 2')
+            results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
+            # with open("image/nasi_goreng.jpg", mode="rb") as test_data:
+                # results = predictor.predict_image(os.environ['OLD_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['OLD_CUSTOM_VISION_ITERATION_ID'])
 
-        prediction_array = []
-        prediction_json = {}
-        max_probability = 0
-        max_tag = 'None'
+            prediction_array = []
+            prediction_json = {}
+            max_probability = 0
+            max_tag = 'None'
 
-        # Display the results.
-        for prediction in results.predictions:
-            # print ("\t" + prediction.tag + ": {0:.2f}%".format(prediction.probability * 100))
-            # prediction_json['tag'] = prediction.tag
-            # prediction_json['probability'] = round(prediction.probability * 100, 2)
-            # prediction_array.append(prediction_json)
+            # Display the results.
+            for prediction in results.predictions:
+                # print ("\t" + prediction.tag + ": {0:.2f}%".format(prediction.probability * 100))
+                # prediction_json['tag'] = prediction.tag
+                # prediction_json['probability'] = round(prediction.probability * 100, 2)
+                # prediction_array.append(prediction_json)
 
-            if(prediction.probability > max_probability):
-                max_probability = prediction.probability
-                max_tag = prediction.tag
+                if(prediction.probability > max_probability):
+                    max_probability = prediction.probability
+                    max_tag = prediction.tag
 
-        # Return only one tag
+            # Return only one tag
+            return jsonify(
+                result='true',
+                prediction_tag=max_tag,
+                prediction_probability=round(max_probability * 100, 2)
+            )
+
+            # Return all tag with each possibility value
+            # return jsonify(
+            #     result='true',
+            #     prediction_array=json.dumps(prediction_array)
+            # )
+    except:
         return jsonify(
-            result='true',
-            prediction_tag=max_tag,
-            prediction_probability=round(max_probability * 100, 2)
+            result='false'
         )
-
-        # Return all tag with each possibility value
-        # return jsonify(
-        #     result='true',
-        #     prediction_array=json.dumps(prediction_array)
-        # )
-    # except:
-    #     return jsonify(
-    #         result='false'
-    #     )
 
 @app.route('/profile', methods = ['GET','POST'])
 def profile():
