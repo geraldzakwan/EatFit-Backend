@@ -52,7 +52,7 @@ def login():
 
 @app.route('/signup', methods = ['POST'])
 def signup():
-    # try:
+    try:
         signup_dictionary = {}
 
         signup_dictionary['username'] = request.form['username']
@@ -63,6 +63,7 @@ def signup():
         signup_dictionary['birth_date'] = request.form['birth_date']
         signup_dictionary['gender'] = request.form['gender']
         signup_dictionary['goal'] = request.form['goal']
+        signup_dictionary['fullname'] = request.form['fullname']
 
         # if('username' in request.form):
         #     signup_dictionary['username'] = request.form['username']
@@ -80,10 +81,10 @@ def signup():
         #     return 'Missing parameter - password'
 
         return db.insert_user(signup_dictionary)
-    # except:
-    #     return jsonify(
-    #         result='false'
-    #     )
+    except:
+        return jsonify(
+            result='false'
+        )
 
 # TODO : replace hardcoded path with binary image file from POST form
 @app.route('/tag', methods = ['POST'])

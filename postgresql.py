@@ -35,13 +35,25 @@ class PostgreSQL:
     # })
     # TODO : check if username already exists
     def insert_user(self, user_dictionary):
-        clause = self.users_table.insert().values(user_dictionary)
-        self.con.execute(clause)
-        user_json = json.dumps(user_dictionary)
-        return jsonify (
-            result='true',
-            user=user_json
+        clause = self.users_table.select().where(
+            self.users_table.c.username == user_dictionary['username']
         )
+        user = self.con.execute(clause).fetchone()
+
+        if(user == None):
+            clause = self.users_table.insert().values(user_dictionary)
+            self.con.execute(clause)
+
+            user_json = json.dumps(user_dictionary)
+            return jsonify (
+                result='true',
+                user=user_json
+            )
+        else:
+            return jsonify (
+                result='false',
+                msg='Signup error - username already taken'
+            )
 
     # Sample use
     # db.insert_food_calory({
