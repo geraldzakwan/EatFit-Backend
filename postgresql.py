@@ -83,7 +83,16 @@ class PostgreSQL:
             )
             user = self.con.execute(clause).fetchone()
         else:
-            return 'Authentication error - missing username/email'
+            return jsonify(
+                result='false',
+                msg='Authentication error - missing username/email'
+            )
+
+        if(user == None):
+            return jsonify(
+                result='false',
+                msg='Authentication error - username/email not found'
+            )
 
         user_json = json.dumps(user.items())
         if(user['password'] == login_dictionary['password']):
