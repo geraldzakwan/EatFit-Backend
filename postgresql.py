@@ -33,12 +33,13 @@ class PostgreSQL:
     #     'food_name' : 'Nasi Goreng',
     #     'calory_amount' : 250
     # })
+    # TODO : check if username already exists
     def insert_user(self, user_dictionary):
         clause = self.users_table.insert().values(user_dictionary)
         self.con.execute(clause)
         user_json = json.dumps(user_dictionary)
         return jsonify (
-            msg='Signup succesful',
+            return='true',
             user=user_json
         )
 
@@ -87,10 +88,42 @@ class PostgreSQL:
         user_json = json.dumps(user.items())
         if(user['password'] == login_dictionary['password']):
             return jsonify(
-                msg='Authentication succesful',
+                return='true',
+                status='true',
                 user=user_json
             )
         else:
             return jsonify(
-                msg='Authentication failed - wrong password'
+                return='true',
+                status='false'
             )
+
+    # Get user info
+    def get_user_profile(self, username):
+        clause = self.users_table.select().where(
+            self.users_table.c.username == username
+        )
+        user = self.con.execute(clause).fetchone()
+
+        user_json = json.dumps(user.items())
+        return jsonify(
+            'return':'true',
+            user=user_json
+        )
+
+    # Update user info
+    def update_user_profile(self, username, profile_dictionary):
+         clause = self.users_table.update().where(
+                    self.users_table.c.username==username
+                  ).values(
+                    username=profile_dictionary['username'],
+                    email=profile_dictionary['email'],
+                    password=profile_dictionary['password'],
+                    height=profile_dictionary['height'],
+                    weight=profile_dictionary['weight'],
+                    birth_date=profile_dictionary['birth_date']
+                  )
+        return jsonify(
+            'return':'true',
+            user=json.dumps(profile_dictionary)
+        )
