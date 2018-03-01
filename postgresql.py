@@ -121,10 +121,56 @@ class PostgreSQL:
                     password=profile_dictionary['password'],
                     height=profile_dictionary['height'],
                     weight=profile_dictionary['weight'],
-                    birth_date=profile_dictionary['birth_date']
+                    birth_date=profile_dictionary['birth_date'],
+                    gender=profile_dictionary['gender'],
+                    goal=profile_dictionary['goal']
                   )
-                  
+
         return jsonify(
             result='true',
             user=json.dumps(profile_dictionary)
+        )
+
+    # Insert
+
+    # Sample use
+    # db.insert_food_calory({
+    #     'food_name' : 'Nasi Goreng',
+    #     'calory_amount' : 250
+    # })
+    # TODO : check if username already exists
+    def insert_activity(self, activity_dictionary):
+        clause = self.activity_calories_table.insert().values(activity_dictionary)
+        self.con.execute(clause)
+        activity_calory_json = json.dumps(activity_dictionary)
+        return jsonify (
+            result='true',
+            activity_calory=activity_calory_json
+        )
+
+    # Insert
+
+    # Sample use
+    # db.insert_food_calory({
+    #     'food_name' : 'Nasi Goreng',
+    #     'calory_amount' : 250
+    # })
+    # TODO : check if username already exists
+    def get_activity_by_date(self, username, date):
+        clause = self.activity_calories_table.select().where(
+            self.activity_calories_table.c.username == username
+        ).where(
+            self.activity_calories_table.c.date == date
+        )
+
+        activity_calories = self.con.execute(clause).fetch()
+        activity_array = []
+        for activity in activity_calories:
+            activity_array.append(activity)
+
+        activity_calory_json = json.dumps(activity_array)
+
+        return jsonify (
+            result='true',
+            activity_calory=activity_calory_json
         )

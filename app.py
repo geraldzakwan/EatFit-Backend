@@ -45,40 +45,49 @@ def login():
 
 @app.route('/signup', methods = ['POST'])
 def signup():
-    try:
+    # try:
         signup_dictionary = {}
 
-        if('username' in request.form):
-            signup_dictionary['username'] = request.form['username']
-        else:
-            return 'Missing parameter - username'
+        signup_dictionary['username'] = request.form['username']
+        signup_dictionary['email'] = request.form['email']
+        signup_dictionary['password'] = request.form['password']
+        signup_dictionary['height'] = request.form['height']
+        signup_dictionary['weight'] = request.form['weight']
+        signup_dictionary['birth_date'] = request.form['birth_date']
+        signup_dictionary['gender'] = request.form['gender']
+        signup_dictionary['goal'] = request.form['goal']
 
-        if('email' in request.form):
-            signup_dictionary['email'] = request.form['email']
-        else:
-            return 'Missing parameter - email'
-
-        if('password' in request.form):
-            signup_dictionary['password'] = request.form['password']
-        else:
-            return 'Missing parameter - password'
+        # if('username' in request.form):
+        #     signup_dictionary['username'] = request.form['username']
+        # else:
+        #     return 'Missing parameter - username'
+        #
+        # if('email' in request.form):
+        #     signup_dictionary['email'] = request.form['email']
+        # else:
+        #     return 'Missing parameter - email'
+        #
+        # if('password' in request.form):
+        #     signup_dictionary['password'] = request.form['password']
+        # else:
+        #     return 'Missing parameter - password'
 
         return db.insert_user(signup_dictionary)
-    except:
-        return jsonify(
-            result='false'
-        )
+    # except:
+    #     return jsonify(
+    #         result='false'
+    #     )
 
 # TODO : replace hardcoded path with binary image file from POST form
 @app.route('/tag', methods = ['POST'])
 def tag():
-    try:
+    # try:
         from azure.cognitiveservices.vision.customvision.prediction import prediction_endpoint
         from azure.cognitiveservices.vision.customvision.prediction.prediction_endpoint import models
 
         # Now there is a trained endpoint, it can be used to make a prediction
 
-        prediction_key = "992477d8c21f41bc963c9fca421ca97b"
+        prediction_key = os.environ['NEW_CUSTOM_VISION_PREDICTION_KEY']
 
         predictor = prediction_endpoint.PredictionEndpoint(prediction_key)
 
@@ -90,7 +99,7 @@ def tag():
         #
         # Open the sample image and get back the prediction results.
         with open("/Users/line/Downloads/nasi_goreng.jpg", mode="rb") as test_data:
-            results = predictor.predict_image("713bf156-aae0-4994-91aa-cc565185421d", test_data.read(), "ae152805-1e2c-46fe-a6db-a57a032d2177")
+            results = predictor.predict_image(os.environ['NEW_CUSTOM_VISION_PROJECT_ID'], test_data.read(), os.environ['NEW_CUSTOM_VISION_ITERATION_ID'])
 
         prediction_array = []
         prediction_json = {}
@@ -120,16 +129,16 @@ def tag():
         #     result='true',
         #     prediction_array=json.dumps(prediction_array)
         # )
-    except:
-        return jsonify(
-            result='false'
-        )
+    # except:
+    #     return jsonify(
+    #         result='false'
+    #     )
 
 @app.route('/profile', methods = ['GET','POST'])
 def profile():
     try:
         if(request.method == 'GET'):
-            return db.get_user_profile(request.form['username'])
+            return db.get_user_profile(request.args.get('username'))
         elif(request.method == 'POST'):
             profile_dictionary = {}
             profile_dictionary['username'] = request.form['username']
@@ -138,6 +147,8 @@ def profile():
             profile_dictionary['height'] = request.form['height']
             profile_dictionary['weight'] = request.form['weight']
             profile_dictionary['birth_date'] = request.form['birth_date']
+            profile_dictionary['gender'] = request.form['gender']
+            profile_dictionary['goal'] = request.form['goal']
             return db.update_user_profile(profile_dictionary)
     except:
         return jsonify(
@@ -147,9 +158,18 @@ def profile():
 @app.route('/activity', methods = ['GET', 'POST'])
 def activity():
     try:
-        return jsonify(
-            result='true'
-        )
+        if(request.method == 'POST'):
+            activity_dictionary = {}
+            activity_dictionary['username'] = request.form['username']
+            activity_dictionary['calory_type'] = request.form['calory_type']
+            activity_dictionary['calory_amount'] = request.form['calory_amount']
+            activity_dictionary['activity_name'] = request.form['activity_name']
+            activity_dictionary['activity_start_hour'] = request.form['activity_start_hour']
+            activity_dictionary['activity_end_hour'] = request.form['activity_end_hour']
+            activity_dictionary['activity_date'] = request.form['activity_date']
+            return db.insert_activity(activity_dictionary)
+        elif(request.method == 'GET'):
+            return db.get_activity_by_date(request.args.get('username'), request.args.get('date'))
     except:
         return jsonify(
             result='false'
